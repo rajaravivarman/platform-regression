@@ -1,0 +1,62 @@
+name: Playwright Daily Tests
+
+# Run Playwright tests every day at 12 PM UTC
+on:
+  schedule:
+    - cron: '0 12 * * *'
+  workflow_dispatch: # Allow manual triggering
+
+jobs:
+  test:
+    name: Run Playwright Smoke Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+      
+      - name: Run Playwright smoke tests
+        run: npm run test:smoke
+        continue-on-error: true
+        id: tests
+      
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
+      
+      - name: Notify Slack on Success
+        if: steps.tests.outcome == 'success'
+        run: |
+          curl -X POST -H 'Content-type: application/json' \
+          --data '{"text":"✅ CloudBees.io Playwright Daily Tests PASSED\n📊 All smoke tests completed successfully\n🔗 View results: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"}' \
+          ${{ secrets.SLACK_WEBHOOK_URL }}
+      
+      - name: Notify Slack on Failure
+        if: steps.tests.outcome == 'failure'
+        run: |
+          curl -X POST -H 'Content-type: application/json' \
+          --data '{"text":"❌ CloudBees.io Playwright Daily Tests FAILED\n🚨 Some smoke tests failed - immediate attention required\n🔗 View details: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\n📋 Please check the test results and fix any failing scenarios."}' \
+          ${{ secrets.SLACK_WEBHOOK_URL }}
+      
+      - name: Notify Slack on Cancelled/Error
+        if: steps.tests.outcome != 'success' && steps.tests.outcome != 'failure'
+        run: |
+          curl -X POST -H 'Content-type: application/json' \
+          --data '{"text":"⚠️ CloudBees.io Playwright Daily Tests encountered an issue\n🔧 Test run was cancelled or encountered an unexpected error\n🔗 Check workflow: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"}' \
+          ${{ secrets.SLACK_WEBHOOK_URL }}
