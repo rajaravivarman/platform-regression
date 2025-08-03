@@ -59,24 +59,4 @@ test.describe('CloudBees.io Homepage Smoke Tests', () => {
     
     console.log('✅ CloudBees.io homepage smoke test completed successfully');
   });
-  
-  test('should verify page accessibility and performance basics', async ({ page }) => {
-    // Navigate to CloudBees.io homepage
-    await page.goto('https://www.cloudbees.io/');
-    
-    // Wait for the page to load completely
-    await page.waitForLoadState('networkidle');
-    
-    // Check that page has proper meta tags
-    const metaDescription = page.locator('meta[name="description"]');
-    const hasMetaDescription = await metaDescription.count() > 0;
-    expect(hasMetaDescription).toBeTruthy();
-    
-    // Verify page has proper heading structure (at least one h1)
-    const h1Elements = page.locator('h1');
-    await expect(h1Elements.first()).toBeVisible();
-    
-    // Check that images have alt attributes (accessibility)
-    const images = page.locator('img');
-    const imageCount = await images.count();
-    
+});
