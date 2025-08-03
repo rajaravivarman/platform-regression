@@ -1,0 +1,23 @@
+{
+  "name": "platform-regression",
+  "version": "1.0.0",
+  "description": "Playwright-based smoke tests for the CloudBees.io platform",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx playwright test",
+    "test:smoke": "npx playwright test tests/smoke/",
+    "test:smoke:headless": "npx playwright test tests/smoke/ --headless"
+  },
+  "keywords": [
+    "playwright",
+    "testing",
+    "smoke-tests",
+    "regression",
+    "cloudbees"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.40.0"
+  }
+}
