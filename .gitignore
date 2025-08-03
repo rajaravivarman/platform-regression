@@ -1,0 +1,38 @@
+# Node modules
+node_modules/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Playwright test results
+playwright-report/
+trace.zip
+
+# VS Code settings
+.vscode/
+
+# Environment files
+.env
+.env.*
+
+# Coverage
+coverage/
+
+# Output
+/dist/
+/build/
+
+# Misc
+*.tgz
+
+# Ignore Mac system files
+.DS_Store
